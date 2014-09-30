@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<title>Student Lap Tracker</title>
+	</head>
+	<body>
+		<form action="/lap" method="POST" id="form">
+			<label for="id">Enter Student ID or Scan Card</label>
+			<input id="idfield" type="text" name="id">
+		</form>
+		<div class="log" id="log"></div>
+		<script>
+			var idInput = $("#idfield"),
+				form    = $("#form"),
+				log     = $("#log");
+
+			idInput.focus();
+			$(document).click(function() { idInput.focus(); });
+
+			function submitStudent(e) {
+				e.preventDefault();
+
+				var id = idInput.val();
+				$.post("/lap", {"id":id}, function(data) {
+					var br = $('<br/>');
+					var span = $("<span></span>");
+					span.html("Scanned "+data.student.Name + " (+1) = " + data.student.TotalLaps);
+					span.attr("stu_id", data.student.ID);
+					var cancelButton = $("<button>Undo</button>");
+					cancelButton.on("click", function() {
+						var id = span.attr("stu_id");
+						$.post("/unlap", {"id":id}, function(data) {
+							br.remove();
+							span.remove();
+						});
+					});
+					span.append(cancelButton);
+					log.prepend(span);
+					log.prepend(br);
+					idInput.val('');
+				}, "json");
+			}
+
+			form.submit(submitStudent);
+		</script>
+	</body>
+</html>
