@@ -6,6 +6,7 @@ from google.appengine.ext import ndb
 from webapp2_extras.appengine.users import login_required, admin_required
 from google.appengine.api import users
 import webapp2
+from import_export import ImportHandler, ExportHandler
 
 import json
 from string import Template
@@ -81,16 +82,6 @@ class MainPage(webapp2.RequestHandler):
 			self.redirect('/')
 			
 		self.response.write(MAIN_PAGE_HTML)
-		
-class ImportHandler(webapp2.RequestHandler):
-	def post(self):
-		self.response.write('<html><body>Import data to be handled here')
-		self.response.write(BACK_BUTTON)
-		
-class ExportHandler(webapp2.RequestHandler):
-	def post(self):
-		self.response.write('<html><body>Export data to be handled here')
-		self.response.write(BACK_BUTTON)
 		
 class LapTrackerHandler(webapp2.RequestHandler):
 	def post(self):
