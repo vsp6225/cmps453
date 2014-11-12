@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<title>View All</title>
+	</head>
+	<body>
+		{%if errors%}
+		Some students do not have an ID set in the IDs sheet. They are listed below. 
+		Some may just be typos, and in that case the closest match is listed to 
+		ease correcting the errors. Please re-upload the spreadsheet once the ids have been 
+		fixed or added. <br>
+		{%endif%}
+		{%for err in errors%}
+			{{err}} <br>
+		{%endfor%}
+
+		{%for class in classes%}
+			{{class.teacher.name}} <br>
+			<table>
+				<thead>
+					<td>ID</td>
+					<td>Name</td>
+					<td>Track 1 Laps</td>
+					<td>Track 2 Laps</td>
+					<td>Total Miles</td>
+				</thead>
+				<tbody>
+					{%for s in class.students%}
+					<tr>
+						<td>{{s.id}}</td>
+						<td>{{s.name}}</td>
+						<td>{{s.laps1}}</td>
+						<td>{{s.laps2}}</td>
+						<td>{{s.total_miles}}</td>
+					</tr>
+					{%endfor%}
+				</tbody>
+			</table>
+		{%endfor%}
+	</body>
+</html>
