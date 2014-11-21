@@ -6,7 +6,7 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: lapTracker.application
+  script: main.application
 
 libraries:
 - name: webapp2
