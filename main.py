@@ -9,27 +9,8 @@ import webapp2
 from import_export import ImportHandler, ExportHandler
 
 import json
-from string import Template
-
+from models import Student
 from tmpl import BaseHandler
-
-cgitb.enable()
-
-BACK_BUTTON = """
-		<form action="/Main" method="post">
-			<div><input type="submit" value="Back to Main Page"></div>
-		</form>
-	</body>
-</html>
-"""
-
-USERNAME = 'dmeche520@gmail.com'
-PASSWORD = 'password'
-
-
-# JSON object template
-jTemp = Template('{ "name" : "$name", "numLaps" : $numLaps, "teacherName" : "$teacherName", "barcodeID" : $barcodeID }')
-# entry = jTemp.substitute("name='student_name', numLaps=1234, teacherName='teacher_Name', barcodeID=1111111")
 
 # Data structure: Student Data
 class studentData(ndb.Model):
@@ -40,14 +21,26 @@ class studentData(ndb.Model):
 	barcodeID = ndb.IntegerProperty()
 
 class MainPage(BaseHandler):
-	@login_required
+	@admin_required
 	def get(self):
 		self.render('html/index.html', {})
 		
 class LapTrackerHandler(BaseHandler):
-	@login_required
+	@admin_required
 	def get(self):
-		self.render('html/tracker.html')
+		self.render('html/tracker.html', {})
+
+class TeacherNameHandler(webapp2.RequestHandler):
+	@admin_required
+	def get(self):
+		self.response.out.write(json.dumps(['Radle', 'Kumar']))
+
+class StudentNameHandler(webapp2.RequestHandler):
+	@admin_required
+	def get(self):
+		students = list(Student.query(Student.teacher==self.request.get('teacher')))
+		self.response.out.write(json.dumps([s.to_dict() for s in students]))
+
 		
 # assigns a web address to a handler
 application = webapp2.WSGIApplication([
@@ -55,4 +48,6 @@ application = webapp2.WSGIApplication([
 	('/import', ImportHandler),
 	('/export', ExportHandler),
 	('/track', LapTrackerHandler),
+	('/teacher_names', TeacherNameHandler),
+	('/student_names', StudentNameHandler),
 ], debug=True)
